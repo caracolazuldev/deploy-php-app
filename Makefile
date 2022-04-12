@@ -1,6 +1,6 @@
 include mdo-config.mk
 include mdo-cli.mk
-include mod-wp.mk
+include mdo-wp.mk
 
 include src/stage.mk
 
@@ -30,8 +30,8 @@ TAR_EXCLUDES := \
 	--exclude="wp-content/uploads/civicrm/custom" 
 
 arch/html.tgz:
-	ssh ${SSH_HOST_PROD} 'cd /var/www && tar czf html.tgz ${TAR_EXCLUDES} html'
-	rsync ${SSH_HOST_PROD}:/var/www/html.tgz $@
+	ssh ${SSH_HOST_PROD} 'tar czf html.tgz ${TAR_EXCLUDES} /var/www/html'
+	rsync ${SSH_HOST_PROD}:~/html.tgz $@
 
 arch/members.sql: 
 	# dumping production database
