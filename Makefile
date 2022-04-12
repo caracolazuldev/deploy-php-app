@@ -11,7 +11,7 @@ set-checkout-dummy-pp:
 	| $(MYSQL_CLI) ${DATABASE}
 
 mysql-cli:
-	mysql --defaults-file=conf/my.cnf
+	mysql --defaults-file=conf/my.cnf ${DATABASE}
 
 # # #
 # Snapshots

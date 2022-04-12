@@ -19,7 +19,7 @@ drop-files:
 	mkdir -p ${WEB_ROOT}
 
 extract-archive: arch/html.tgz 
-	tar -xzf arch/html.tgz -C ${WEB_ROOT} $(if ${REWRITE_UNTAR}, --xform ${REWRITE_UNTAR})
+	tar -xzf arch/html.tgz -C ${WEB_ROOT} $(if ${REWRITE_UNTAR}, --xform '${REWRITE_UNTAR}')
 
 files-restore: drop-files extract-archive
 
