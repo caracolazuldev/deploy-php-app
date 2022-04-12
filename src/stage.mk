@@ -42,7 +42,7 @@ load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI
 
 SRDB_EXEC ?= srdb/srdb.cli.php
 
-SRDB_CMD ?= php $(SRDB_EXEC) -h ${MYSQL_HOST} -u '${DATABASE_USER}' -p '${DATABASE_PASSWORD}' -t 'civicrm_setting,menu_links,variable,sessions,users,block_custom,cache_menu,cache_form'
+SRDB_CMD ?= php $(SRDB_EXEC) -h ${MYSQL_HOST} -u '${DATABASE_USER}' -p '${DATABASE_PASSWORD}' -t 'civicrm_setting,menu_links,variable,sessions,users,block_custom,cache_menu,cache_form,wp_options'
 
 disable-ssl = $(SRDB_CMD) -n '${1}' -s 'https:' -r 'http:' 2>/dev/null
 enable-ssl = $(SRDB_CMD) -n '${1}' -s 'http:' -r 'https:' 2>/dev/null
