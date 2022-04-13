@@ -22,5 +22,5 @@ exclude-cache-tables := civicrm_acl_cache civicrm_acl_contact_cache civicrm_cach
 grep-excludes := $(foreach e,${exclude-cache-tables}, -e $e)
 table-list := $(shell echo "${civi-tables}\n${wp-tables}" | grep -v ${grep-excludes})
 
-civicrm.dump.sql:
+arch/${DATABASE}.sql:
 	$(foreach tbl,${table-list},$(call dump-table,${tbl}))
