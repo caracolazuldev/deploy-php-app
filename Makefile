@@ -33,9 +33,8 @@ arch/html.tgz:
 	ssh ${SSH_HOST_PROD} 'tar czf html.tgz ${TAR_EXCLUDES} /var/www/html'
 	rsync ${SSH_HOST_PROD}:~/html.tgz $@
 
-arch/members.sql: export MYSQL_CLI := mysql --defaults-file=conf/${MYSQL_CNF_PROD}
-arch/members.sql: export DATABASE
-arch/members.sql: 
+arch/members.sql: $(eval export MYSQL_CLI := mysql --defaults-file=conf/${MYSQL_CNF_PROD})
+arch/members.sql: $(eval export DATABASE)
+arch/members.sql:
 	# dumping production database
 	$(MAKE) -f src/dump-tables.mk
-
