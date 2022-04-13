@@ -39,7 +39,7 @@ drop-db-%: | require-env-MYSQL_CLI
 load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI 
 	$(info $(MYSQL_CLI))
 	$(call user-confirm,RESTORE ${DATABASE}?)
-	# $(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
+	$(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
 
 # # #
 # Run Configs
