@@ -31,10 +31,12 @@ file-permissions:
 # # #
 
 drop-db-%: | require-env-MYSQL_CLI
-	echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
+	$(info $(MYSQL_CLI))
+	# echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
 
 load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI 
-	$(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
+	$(info $(MYSQL_CLI))
+	# $(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
 
 # # #
 # Run Configs
