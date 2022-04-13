@@ -4,6 +4,7 @@
 # # # 
 
 include mdo-require.mk
+include mdo-cli.mk
 
 stage: files-restore file-permissions load-mysql-dump replace-urls cms-config crm-config file-permissions set-checkout-dummy-pp
 
@@ -32,10 +33,12 @@ file-permissions:
 
 drop-db-%: | require-env-MYSQL_CLI
 	$(info $(MYSQL_CLI))
-	# echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
+	$(call user-confirm,DROP DATABASE ${*}?)
+	echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
 
 load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI 
 	$(info $(MYSQL_CLI))
+	$(call user-confirm,RESTORE ${DATABASE}?)
 	# $(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
 
 # # #
