@@ -33,8 +33,18 @@ arch/html.tgz:
 	ssh ${SSH_HOST_PROD} 'tar czf html.tgz ${TAR_EXCLUDES} /var/www/html'
 	rsync ${SSH_HOST_PROD}:~/html.tgz $@
 
+replace-in = sed -i 's%$1%$2%g'
+remove-in = sed -i 's%$1%%g'
+SEARCH_SQL_GTID := ^SET @@GLOBAL\.GTID_PURGED.*$$
+SEARCH_SQL_TEMP_LOGBIN := ^SET @MYSQLDUMP_TEMP_LOG_BIN.*$$
+SEARCH_SQL_LOGBIN := ^SET @@SESSION.SQL_LOG_BIN.*$$
+
+arch/members.sql: export MYSQL_CLI := mysql --defaults-file=conf/${MYSQL_CNF_PROD}
+arch/members.sql: export DATABASE
 arch/members.sql: 
 	# dumping production database
-	mysqldump --defaults-file=conf/${MYSQL_CNF_PROD} ${DATABASE} >$@
-	@# replace user for views DEFINER
-	@# sed -i 's#${DATABASE_REPLACE_DEFINER}#`${DATABASE_USER}`@`${MYSQL_HOST_IP}`#' $@
+	$(info ${MYSQL_CLI})
+	$(MAKE) -f src/dump-tables.mk
+	#$(call remove-in,${SEARCH_SQL_LOGBIN}) $@ 
+	#$(call remove-in,${SEARCH_SQL_TEMP_LOGBIN}) $@ 
+	#$(call remove-in,${SEARCH_SQL_GTID}) $@ 
