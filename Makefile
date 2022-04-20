@@ -13,6 +13,10 @@ set-checkout-dummy-pp:
 mysql-cli:
 	mysql --defaults-file=conf/my.cnf ${DATABASE}
 
+clear-caches:
+	cd ${WEB_ROOT} && wp cache flush
+	cd ${WEB_ROOT} && wp civicrm cache-clear
+
 # # #
 # Snapshots
 # # #
