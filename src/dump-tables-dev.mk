@@ -54,6 +54,6 @@ tables-matching = echo "show tables like '$1';" | ${MYSQL_CLI} --skip-column-nam
 
 table-list := $(shell $(call tables-matching,civicrm_%) | grep -v ${grep-excludes}) $(shell $(call tables-matching,wp_%) | grep -v ${grep-excludes})
 
-arch/${DATABASE}.sql:
+arch/${DATABASE}-dev.sql:
 	$(foreach tbl,${table-list},$(call dump-table,${tbl}))
 	$(foreach tbl,${EXCLUDED_DUMP_TABLES},$(call dump-schema,${tbl}))
