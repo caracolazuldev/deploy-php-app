@@ -42,3 +42,9 @@ arch/members.sql:
 	MYSQL_CLI='mysql --defaults-file=conf/${MYSQL_CNF_PROD}' \
 	DATABASE=${DATABASE} \
 	$(MAKE) -f src/dump-tables.mk
+
+arch/members-dev.sql:
+	# dumping production database
+	MYSQL_CLI='mysql --defaults-file=conf/${MYSQL_CNF_PROD}' \
+	DATABASE=${DATABASE} \
+	$(MAKE) -f src/dump-tables-dev.mk
