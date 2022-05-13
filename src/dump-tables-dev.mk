@@ -29,6 +29,7 @@ DEFINER_REGEX := /\*![0-9]* DEFINER=[^*]*\*/ # includes trailing space; fwd-slas
 CONNECTION_COLLATION_80 := utf8mb4_0900_ai_ci
 CONNECTION_COLLATION_LEGACY := utf8mb4_general_ci
 
+MAX_ACTIVITY_ID := 319953# last activity of 2021
 #
 # FUNCTIONS
 #
@@ -38,8 +39,15 @@ mysql-dump = $(subst mysql,mysqldump,${MYSQL_CLI})
 remove-in = sed 's%$1%%g'
 replace-in = sed 's%$1%$2%g'
 
+# sub-routine of dump-table:
+# when table is _activity_contact or _case_activity:= filter dump by activity_id field
+# when table is _activity := filter dump by id field:
+WHERE_ACTIVITY_ID = --where="$(or $(if $(or $(findstring contact,$1),$(findstring case,$1)), activity_id),id) > ${MAX_ACTIVITY_ID}"
+
 define dump-table
-    ${mysql-dump} --skip-comments --skip-dump-date --set-gtid-purged=OFF ${DATABASE} $1 \
+    ${mysql-dump} --skip-comments --skip-dump-date --set-gtid-purged=OFF \
+		$(if $(findstring activity,$1),$(WHERE_ACTIVITY_ID)) \
+		${DATABASE} $1 \
 		| $(call remove-in,${DEFINER_REGEX}) \
 		| $(call remove-in,${SEARCH_SQL_LOGBIN}) \
 		| $(call remove-in,${SEARCH_SQL_TEMP_LOGBIN}) \
