@@ -29,7 +29,7 @@ DEFINER_REGEX := /\*![0-9]* DEFINER=[^*]*\*/ # includes trailing space; fwd-slas
 CONNECTION_COLLATION_80 := utf8mb4_0900_ai_ci
 CONNECTION_COLLATION_LEGACY := utf8mb4_general_ci
 
-MAX_ACTIVITY_ID := 319953# last activity of 2021
+ACTIVITY_ID_CUTOFF := 319953# last activity of 2021
 #
 # FUNCTIONS
 #
@@ -42,7 +42,7 @@ replace-in = sed 's%$1%$2%g'
 # sub-routine of dump-table:
 # when table is _activity_contact or _case_activity:= filter dump by activity_id field
 # when table is _activity := filter dump by id field:
-WHERE_ACTIVITY_ID = --where="$(or $(if $(or $(findstring contact,$1),$(findstring case,$1)), activity_id),id) > ${MAX_ACTIVITY_ID}"
+WHERE_ACTIVITY_ID = --where="$(or $(if $(or $(findstring contact,$1),$(findstring case,$1)), activity_id),id) > ${ACTIVITY_ID_CUTOFF}"
 
 define dump-table
     ${mysql-dump} --skip-comments --skip-dump-date --set-gtid-purged=OFF \
