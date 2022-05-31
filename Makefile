@@ -26,15 +26,15 @@ freshen-snapshots:
 	-test -f arch/members.sql && rm arch/members.sql
 	$(MAKE) arch/html.tgz arch/members.sql
 
-TAR_EXCLUDES := \
-	--exclude="wp-content/uploads/civicrm/ConfigAndLog" \
-	--exclude="wp-content/uploads/civicrm/templates_c" \
-	--exclude="wp-content/uploads/civicrm/upload" \
-	--exclude="wp-content/uploads/civicrm/persist/contribute" \
-	--exclude="wp-content/uploads/civicrm/custom" 
+TAR_EXCLUDES ?= \
+	"wp-content/uploads/civicrm/ConfigAndLog" \
+	"wp-content/uploads/civicrm/templates_c" \
+	"wp-content/uploads/civicrm/upload" \
+	"wp-content/uploads/civicrm/persist/contribute" \
+	"wp-content/uploads/civicrm/custom" 
 
 arch/html.tgz:
-	ssh ${SSH_HOST_PROD} 'tar czf html.tgz ${TAR_EXCLUDES} /var/www/html'
+	ssh ${SSH_HOST_PROD} 'tar czf html.tgz $(foreach x,${TAR_EXCLUDES},--exclude=$x ) /var/www/html'
 	rsync ${SSH_HOST_PROD}:~/html.tgz $@
 
 arch/members.sql:
