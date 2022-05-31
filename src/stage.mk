@@ -27,7 +27,12 @@ extract-archive: arch/html.tgz
 files-restore: drop-files extract-archive
 
 file-permissions:
-	$(MAKE) -f src/facls.mk shared
+ifdef FACLS_MODE
+	$(MAKE) -f src/facls.mk ${FACLS_MODE}
+else
+	@# guess permissions mode based on host-name:
+	$(MAKE) -f src/facls.mk $(if $(findstring localhost,${REPLACE_HOST}),dev,stage)
+endif
 
 # # #
 # Database
