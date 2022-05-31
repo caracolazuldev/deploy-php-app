@@ -4,4 +4,5 @@ TAR_EXCLUDES ?= {{TAR_EXCLUDES}}# '--exclude=' params
 REWRITE_UNTAR ?= {{REWRITE_UNTAR}}# sed replace EXPRESSION for tar --xform=EXPRESSION
 SEARCH_HOST ?= {{SEARCH_HOST}}# srdb host search-string
 REPLACE_HOST ?= {{REPLACE_HOST}}# srdb host replace-string
+DISABLE_SSL ?= {{DISABLE_SSL}}# boolean disable or enable SSL if not TRUE
 AUTO_CONFIRM ?= {{AUTO_CONFIRM}}# set TRUE to disable confirmation requests

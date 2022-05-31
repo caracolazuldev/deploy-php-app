@@ -59,17 +59,18 @@ SRDB_CMD ?= php $(SRDB_EXEC) -h ${MYSQL_HOST} -u '${DATABASE_USER}' -p '${DATABA
 
 disable-ssl = $(SRDB_CMD) -n '${1}' -s 'https:' -r 'http:' 2>/dev/null
 enable-ssl = $(SRDB_CMD) -n '${1}' -s 'http:' -r 'https:' 2>/dev/null
-remove-www = $(SRDB_CMD) -n '${1}' -s '://www.' -r '://' 2>/dev/null
-search-replace = $(SRDB_CMD) -n '${1}' -s '${SEARCH_HOST}' -r '${REPLACE_HOST}' 2>/dev/null
+search-replace-host = $(SRDB_CMD) -n '${1}' -s '${SEARCH_HOST}' -r '${REPLACE_HOST}' 2>/dev/null
 
 srdb:
-	git clone git@github.com:interconnectit/Search-Replace-DB.git ${@}
+	git clone git@github.com:interconnectit/search-replace-host-DB.git ${@}
 
 replace-urls: srdb | require-env-DATABASE
-	#$(call remove-www,${DATABASE})
-	$(call search-replace,${DATABASE})
-	#$(call disable-ssl,${DATABASE})
+	$(call search-replace-host,${DATABASE})
+ifeq (TRUE, ${DISABLE_SSL})
+	$(call disable-ssl,${DATABASE})
+else
 	$(call enable-ssl,${DATABASE})
+endif
 
 enable-ssl: srdb | require-env-DATABASE
 	$(call enable-ssl,${DATABASE})
