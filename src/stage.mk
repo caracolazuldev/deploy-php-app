@@ -18,8 +18,7 @@ ifneq (TRUE,${AUTO_CONFIRM})
 endif
 	@ echo 'Dropping files...';
 	sudo chmod -R ug+rw ${WEB_ROOT}
-	sudo rm -r ${WEB_ROOT}
-	mkdir -p ${WEB_ROOT}
+	-sudo rm -r ${WEB_ROOT}* ${WEB_ROOT}.*
 
 extract-archive: arch/html.tgz 
 	tar -xzf arch/html.tgz -C ${WEB_ROOT} $(if ${REWRITE_UNTAR}, --xform '${REWRITE_UNTAR}')
