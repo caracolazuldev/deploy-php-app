@@ -13,7 +13,9 @@ stage: files-restore file-permissions load-mysql-dump replace-urls cms-config cr
 # # #
 
 drop-files:
+ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,"Delete all files in ${WEB_ROOT}?")
+endif
 	@ echo 'Dropping files...';
 	sudo chmod -R ug+rw ${WEB_ROOT}
 	sudo rm -r ${WEB_ROOT}
@@ -33,12 +35,16 @@ file-permissions:
 
 drop-db-%: | require-env-MYSQL_CLI
 	$(info $(MYSQL_CLI))
+ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,DROP DATABASE ${*}?)
+endif
 	echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
 
 load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI 
 	$(info $(MYSQL_CLI))
+ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,RESTORE ${DATABASE}?)
+endif
 	$(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
 
 # # #
