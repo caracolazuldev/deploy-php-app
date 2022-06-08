@@ -55,11 +55,14 @@ endif
 # Run Configs
 # # #
 
-SRDB_EXEC ?= srdb/srdb.cli.php
+SRDB_TABLES_WP := wp_options,wp_posts,wp_postmeta
+SRDB_TABLES_D7 := menu_links,variable,sessions,users,block_custom,cache_menu,cache_form
+SRDB_TABLES_CIVICRM := civicrm_setting,civicrm_contribution_page,civicrm_mailing_component,civicrm_mosaico_template,civicrm_msg_template,civicrm_navigation,civicrm_option_value,civicrm_report_instance,civicrm_saved_search
+SRDB_TABLES_CIVICRM_FULL := civicrm_action_schedule,civicrm_activity,civicrm_mailing,civicrm_mailing_spool,civicrm_mailing_trackable_url
 
-# wp: civicrm_setting,wp_options,wp_posts,wp_postmeta
-# d7: menu_links,variable,sessions,users,block_custom,cache_menu,cache_form,wp_options
-SRDB_CMD ?= php $(SRDB_EXEC) -h ${MYSQL_HOST} -u '${DATABASE_USER}' -p '${DATABASE_PASSWORD}' -t 'civicrm_setting,civicrm_setting,wp_options,wp_posts,wp_postmeta'
+SRDB_TABLES ?= ${SRDB_TABLES_WP},${SRDB_TABLES_CIVICRM}
+SRDB_EXEC ?= srdb/srdb.cli.php
+SRDB_CMD ?= php $(SRDB_EXEC) -h ${MYSQL_HOST} -u '${DATABASE_USER}' -p '${DATABASE_PASSWORD}' -t '${SRDB_TABLES}'
 
 disable-ssl = $(SRDB_CMD) -n '${1}' -s 'https:' -r 'http:' 2>/dev/null
 enable-ssl = $(SRDB_CMD) -n '${1}' -s 'http:' -r 'https:' 2>/dev/null
