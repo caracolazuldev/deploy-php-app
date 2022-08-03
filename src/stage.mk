@@ -40,14 +40,14 @@ endif
 drop-db-%: | require-env-MYSQL_CLI
 	$(info $(MYSQL_CLI))
 ifneq (TRUE,${AUTO_CONFIRM})
-	$(call user-confirm,DROP DATABASE ${*}?)
+	$(call user-confirm,Please confirm my.cnf file: DROP DATABASE ${*}?)
 endif
 	echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
 
 load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI 
 	$(info $(MYSQL_CLI))
 ifneq (TRUE,${AUTO_CONFIRM})
-	$(call user-confirm,RESTORE ${DATABASE}?)
+	$(call user-confirm,Please confirm my.cnf file: RESTORE ${DATABASE}?)
 endif
 	$(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
 
