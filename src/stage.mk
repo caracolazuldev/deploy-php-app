@@ -6,7 +6,7 @@
 include mdo-require.mk
 include mdo-cli.mk
 
-stage: files-restore file-permissions load-mysql-dump replace-urls cms-config crm-config file-permissions set-checkout-dummy-pp
+stage: files-restore file-permissions load-mysql-dump replace-urls cms-config crm-config file-permissions
 
 # # #
 # Files
