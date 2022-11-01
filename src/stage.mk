@@ -70,7 +70,7 @@ enable-ssl = $(SRDB_CMD) -n '${1}' -s 'http:' -r 'https:' 2>/dev/null
 search-replace-host = $(SRDB_CMD) -n '${1}' -s '${SEARCH_HOST}' -r '${REPLACE_HOST}' 2>/dev/null
 
 srdb:
-	git clone git@github.com:interconnectit/search-replace-host-DB.git ${@}
+	git clone https://github.com/interconnectit/Search-Replace-DB.git ${@}
 
 replace-urls: srdb | require-env-DATABASE
 	$(call search-replace-host,${DATABASE})
