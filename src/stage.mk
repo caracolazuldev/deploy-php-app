@@ -6,7 +6,7 @@
 include mdo-require.mk
 include mdo-cli.mk
 
-stage: files-restore file-permissions load-mysql-dump replace-urls cms-config crm-config file-permissions
+stage: files-restore file-permissions load-mysql-dump replace-urls cms-config crm-config mailing-backend file-permissions
 
 # # #
 # Files
@@ -93,3 +93,11 @@ cms-config:
 
 crm-config:
 	cp $(realpath conf/civicrm.settings.php) $(realpath ${WEB_ROOT}wp-content/uploads/civicrm)/civicrm.settings.php
+
+mailing-backend:
+ifdef CIVICRM_MAILING_BACKEND
+	cd ${WEB_ROOT}; \
+	cat $(shell pwd)/${CIVICRM_MAILING_BACKEND} | cv api4 Setting.set --in=json 1>/dev/null
+else
+	# CIVICRM_MAILING_BACKEND is not defined
+endif

@@ -1,0 +1,14 @@
+{
+    "values": {
+        "mailing_backend": {
+			"sendmail_path": "/usr/sbin/sendmail",
+			"sendmail_args": "-i",
+			"outBound_option": "2",
+			"smtpServer": "disabled",
+            "smtpPort": "587",
+            "smtpAuth": "0"
+
+		}
+    },
+    "domainId": 1
+}

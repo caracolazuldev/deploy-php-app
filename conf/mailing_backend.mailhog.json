@@ -1,0 +1,12 @@
+{
+    "values": {
+        "mailing_backend": {
+            "sendmail_path": "/usr/sbin/sendmail",
+            "sendmail_args": "-i",
+            "smtpServer": "mailhog",
+            "smtpPort": "1025",
+            "smtpAuth": "0"
+        }
+    },
+    "domainId": 1
+}
