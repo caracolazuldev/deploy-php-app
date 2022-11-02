@@ -44,6 +44,7 @@ define dump-schema
 		| $(call remove-in,${DEFINER_REGEX}) \
 		| $(call remove-in,${SEARCH_SQL_LOGBIN}) \
 		| $(call remove-in,${SEARCH_SQL_TEMP_LOGBIN}) \
+		| $(call replace-in,${CONNECTION_COLLATION_80},${CONNECTION_COLLATION_LEGACY}) \
 		>> $@
 
 endef
