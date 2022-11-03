@@ -22,6 +22,9 @@ SEARCH_SQL_TEMP_LOGBIN := ^SET @MYSQLDUMP_TEMP_LOG_BIN.*$$
 SEARCH_SQL_LOGBIN := ^SET @@SESSION.SQL_LOG_BIN.*$$
 DEFINER_REGEX := /\*![0-9]* DEFINER=[^*]*\*/ # includes trailing space; fwd-slashes are part of pattern, delimiter is %;
 
+CONNECTION_COLLATION_80 := utf8mb4_0900_ai_ci
+CONNECTION_COLLATION_LEGACY := utf8mb4_general_ci
+
 #
 # FUNCTIONS
 #
@@ -29,12 +32,15 @@ DEFINER_REGEX := /\*![0-9]* DEFINER=[^*]*\*/ # includes trailing space; fwd-slas
 mysql-dump = $(subst mysql,mysqldump,${MYSQL_CLI})
 
 remove-in = sed 's%$1%%g'
+replace-in = sed 's%$1%$2%g'
+
 
 define dump-table
     ${mysql-dump} --skip-comments --skip-dump-date --set-gtid-purged=OFF ${DATABASE} $1 \
 		| $(call remove-in,${DEFINER_REGEX}) \
 		| $(call remove-in,${SEARCH_SQL_LOGBIN}) \
 		| $(call remove-in,${SEARCH_SQL_TEMP_LOGBIN}) \
+		| $(call replace-in,${CONNECTION_COLLATION_80},${CONNECTION_COLLATION_LEGACY}) \
 		>> $@
 
 endef
