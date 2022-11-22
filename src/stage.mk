@@ -96,7 +96,7 @@ crm-config:
 
 mailing-backend:
 ifdef CIVICRM_MAILING_BACKEND
-	cd ${WEB_ROOT}; \
+	$(eval export CIVICRM_SETTINGS ?= $(shell find /var/www/html -name civicrm.settings.php))
 	cat $(shell pwd)/${CIVICRM_MAILING_BACKEND} | cv api4 Setting.set --in=json 1>/dev/null
 else
 	# CIVICRM_MAILING_BACKEND is not defined
