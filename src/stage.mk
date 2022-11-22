@@ -6,7 +6,7 @@
 include mdo-require.mk
 include mdo-cli.mk
 
-stage: files-restore file-permissions load-mysql-dump replace-urls cms-config crm-config mailing-backend file-permissions
+stage: files-restore file-permissions cms-config crm-config restore-db file-permissions
 
 # # #
 # Files
@@ -38,6 +38,8 @@ endif
 # Database
 # # #
 
+restore-db: load-mysql-dump replace-urls rebuild-triggers crm-config mailing-backend
+
 drop-db-%: | require-env-MYSQL_CLI
 	$(info $(MYSQL_CLI))
 ifneq (TRUE,${AUTO_CONFIRM})
@@ -51,6 +53,10 @@ ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,Please confirm my.cnf file: RESTORE ${DATABASE}?)
 endif
 	$(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
+
+rebuild-triggers:
+	$(eval export CIVICRM_SETTINGS ?= $(shell find /var/www/html -name civicrm.settings.php))
+	cv api4 System.flush '{"triggers":true}'
 
 # # #
 # Run Configs
