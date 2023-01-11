@@ -70,7 +70,7 @@ grep-excludes := $(foreach e,${EXCLUDED_DUMP_TABLES}, -e $e)
 
 tables-matching = echo "show tables like '$1';" | ${MYSQL_CLI} --skip-column-names ${DATABASE}
 
-table-list := $(shell $(call tables-matching,civicrm_%) | grep -v ${grep-excludes}) $(shell $(call tables-matching,wp_%) | grep -v ${grep-excludes})
+table-list := $(shell $(call tables-matching,civicrm_%) | grep -v ${grep-excludes}) $(shell $(call tables-matching,wp_%) | grep -v ${grep-excludes}) $(shell $(call tables-matching,civirule_%) | grep -v ${grep-excludes})
 
 arch/${DATABASE}-dev.sql:
 	$(foreach tbl,${table-list},$(call dump-table,${tbl}))
