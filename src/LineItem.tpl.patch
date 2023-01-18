@@ -22,6 +22,7 @@ index 7502e850ad2..e94853330ff 100644
            {/foreach}
            {if $lineItemCount < 1 }
              {assign var="lineItemCount" value=1}
+
 diff --git a/templates/CRM/Price/Page/LineItem.tpl b/templates/CRM/Price/Page/LineItem.tpl
 index 7bac227eb9b..d2c55bebcb5 100644
 --- a/templates/CRM/Price/Page/LineItem.tpl
@@ -36,3 +37,34 @@ index 7bac227eb9b..d2c55bebcb5 100644
          {/foreach}
          {if $lineItemCount < 1 }
            {assign var="lineItemCount" value=1}
+
+diff --git a/CRM/Contact/BAO/Group.php b/CRM/Contact/BAO/Group.php
+index 0342416cff..112f38730e 100644
+--- a/CRM/Contact/BAO/Group.php
++++ b/CRM/Contact/BAO/Group.php
+@@ -999,7 +999,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
+     // CRM-16905 - Sort by count cannot be done with sql
+     if (!empty($params['sort']) && strpos($params['sort'], 'count') === 0) {
+       usort($values, function($a, $b) {
+-        return $a['count'] - $b['count'];
++        return (int)$a['count'] - $b['count'];
+       });
+       if (strpos($params['sort'], 'desc')) {
+         $values = array_reverse($values, TRUE);
+
+diff --git a/CRM/Price/BAO/LineItem.php b/CRM/Price/BAO/LineItem.php
+index ab096b848d..b552711895 100644
+--- a/CRM/Price/BAO/LineItem.php
++++ b/CRM/Price/BAO/LineItem.php
+@@ -319,8 +319,8 @@ WHERE li.contribution_id = %1";
+         'description' => $options[$oid]['description'] ?? NULL,
+         'qty' => $qty,
+         'unit_price' => $price,
+-        'line_total' => $qty * $price,
+-        'participant_count' => $qty * $participantsPerField,
++        'line_total' => (int)$qty * $price,
++        'participant_count' => (int)$qty * $participantsPerField,
+         'max_value' => $options[$oid]['max_value'] ?? NULL,
+         'membership_type_id' => $options[$oid]['membership_type_id'] ?? NULL,
+         'membership_num_terms' => $options[$oid]['membership_num_terms'] ?? NULL,
+
