@@ -1,0 +1,31 @@
+From afb2697a7bca5666862f7c5d2e68863074c3ee87 Mon Sep 17 00:00:00 2001
+From: ginkgoMZD <mzd@ginkgostreet.com>
+Date: Mon, 28 Mar 2022 18:15:40 -0400
+Subject: [PATCH] do not URL Encode AMT (amount) parameter for PayFlowPro
+
+---
+ ext/payflowpro/CRM/Core/Payment/PayflowPro.php | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/ext/payflowpro/CRM/Core/Payment/PayflowPro.php b/ext/payflowpro/CRM/Core/Payment/PayflowPro.php
+index 49c6e7ce527..2146fbfa8e8 100644
+--- a/ext/payflowpro/CRM/Core/Payment/PayflowPro.php
++++ b/ext/payflowpro/CRM/Core/Payment/PayflowPro.php
+@@ -112,6 +112,8 @@ public function doPayment(&$params, $component = 'contribute') {
+      *Create the array of variables to be sent to the processor from the $params array
+      * passed into this function
+      *
++     * NB: PayFlowPro does not accept URL Encoded parameters.
++     * Particularly problematic when amount contains grouping character: e.g 1,234.56 will return [4 - Invalid Amount]
+      */
+ 
+     $payflow_query_array = [
+@@ -127,7 +129,7 @@ public function doPayment(&$params, $component = 'contribute') {
+       'CVV2' => $params['cvv2'],
+       'EXPDATE' => urlencode(sprintf('%02d', (int) $params['month']) . substr($params['year'], 2, 2)),
+       'ACCTTYPE' => urlencode($params['credit_card_type']),
+-      'AMT' => urlencode($this->getAmount($params)),
++      'AMT' => $this->getAmount($params),
+       'CURRENCY' => urlencode($params['currency']),
+       'FIRSTNAME' => $params['billing_first_name'],
+       //credit card name

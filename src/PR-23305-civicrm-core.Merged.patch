@@ -1,0 +1,28 @@
+commit 0f6e4e416025d9063d4a4acbeceb33d6d95cce94
+Author: ginkgoMZD <mzd@ginkgostreet.com>
+Date:   Tue Apr 26 15:30:31 2022 -0400
+
+    correct logic for handling empty-array values for checkboxes;
+
+diff --git a/api/v3/utils.php b/api/v3/utils.php
+index a7ce83160e..08d99f9fce 100644
+--- a/api/v3/utils.php
++++ b/api/v3/utils.php
+@@ -1110,7 +1110,7 @@ function _civicrm_api3_custom_format_params($params, &$values, $extends, $entity
+   foreach ($params as $key => $value) {
+     list($customFieldID, $customValueID) = CRM_Core_BAO_CustomField::getKeyID($key, TRUE);
+     if ($customFieldID && (!is_null($value))) {
+-      if ($checkCheckBoxField && !empty($fields['custom_' . $customFieldID]) && $fields['custom_' . $customFieldID]['html_type'] == 'CheckBox') {
++      if ($checkCheckBoxField && isset($fields['custom_' . $customFieldID]) && $fields['custom_' . $customFieldID]['html_type'] == 'CheckBox') {
+         formatCheckBoxField($value, 'custom_' . $customFieldID, $entity);
+       }
+ 
+@@ -1178,7 +1178,7 @@ function formatCheckBoxField(&$checkboxFieldValue, $customFieldLabel, $entity) {
+ 
+   $options = $options['values'];
+   $validValue = TRUE;
+-  if (is_array($checkboxFieldValue)) {
++  if (is_array($checkboxFieldValue) && !empty($checkboxFieldValue)) {
+     foreach ($checkboxFieldValue as $key => $value) {
+       if (!array_key_exists($key, $options)) {
+         $validValue = FALSE;
