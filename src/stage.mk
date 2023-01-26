@@ -6,7 +6,9 @@
 include mdo-require.mk
 include mdo-cli.mk
 
-stage: files-restore file-permissions cms-config crm-config restore-db file-permissions
+stage: files-restore file-permissions cms-config crm-config restore-db
+	@# make will not make a target in the pre-req list more than once, so call explicitly again:
+	$(MAKE) file-permissions
 
 # # #
 # Files
