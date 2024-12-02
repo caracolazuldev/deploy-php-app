@@ -1,10 +1,11 @@
 # # #
 # INCLUDE FILE
 # Not intended to be invoked directly, i.e. paths are relative to the main Makefile
-# # # 
+# # #
 
 include mdo-require.mk
 include mdo-cli.mk
+include src/civi-util.mk
 
 stage: files-restore file-permissions cms-config crm-config restore-db
 	@# make will not make a target in the pre-req list more than once, so call explicitly again:
@@ -40,7 +41,7 @@ endif
 # Database
 # # #
 
-restore-db: load-mysql-dump replace-urls rebuild-triggers crm-config mailing-backend
+restore-db: load-mysql-dump replace-urls rebuild-triggers crm-config
 
 drop-db-%: | require-env-MYSQL_CLI
 	$(info $(MYSQL_CLI))
@@ -49,7 +50,7 @@ ifneq (TRUE,${AUTO_CONFIRM})
 endif
 	echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
 
-load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI 
+load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI
 	$(info $(MYSQL_CLI))
 ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,Please confirm my.cnf file: RESTORE ${DATABASE}?)
@@ -101,11 +102,4 @@ cms-config:
 
 crm-config:
 	cp $(realpath conf/civicrm.settings.php) $(realpath ${WEB_ROOT}wp-content/uploads/civicrm)/civicrm.settings.php
-
-mailing-backend:
-ifdef CIVICRM_MAILING_BACKEND
-	$(eval export CIVICRM_SETTINGS ?= $(shell find /var/www/html -name civicrm.settings.php))
-	cat $(shell pwd)/${CIVICRM_MAILING_BACKEND} | cv api4 Setting.set --in=json 1>/dev/null
-else
-	# CIVICRM_MAILING_BACKEND is not defined
-endif
+	$(MAKE) -f src/civi-util.mk mailing-backend
