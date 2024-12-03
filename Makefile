@@ -1,14 +1,21 @@
+
+README ?= USAGE.md
+
+include mdo-help.mk
 include mdo-config.mk
 include mdo-cli.mk
-include mdo-wp.mk
+# include mdo-wp.mk
 
 include src/stage.mk
 
-default: stage set-checkout-dummy-pp wp-enable-debug
+default: help
 
-set-checkout-dummy-pp:
-	echo "update civicrm_contribution_page SET payment_processor = 1 WHERE id IN (1,2);" \
-	| $(MYSQL_CLI) ${DATABASE}
+# # #
+# Example integration for a dev-env
+# # #
+
+
+deploy: stage set-checkout-dummy-pp wp-enable-debug
 
 mysql-cli:
 	mysql --defaults-file=conf/my.cnf ${DATABASE}
@@ -31,7 +38,7 @@ TAR_EXCLUDES ?= \
 	"wp-content/uploads/civicrm/templates_c" \
 	"wp-content/uploads/civicrm/upload" \
 	"wp-content/uploads/civicrm/persist/contribute" \
-	"wp-content/uploads/civicrm/custom" 
+	"wp-content/uploads/civicrm/custom"
 
 arch/html.tgz:
 	ssh ${SSH_HOST_PROD} 'tar czf html.tgz $(foreach x,${TAR_EXCLUDES},--exclude=$x ) /var/www/html'
