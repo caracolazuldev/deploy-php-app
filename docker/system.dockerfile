@@ -15,7 +15,7 @@ RUN apt-get install -y --install-recommends \
 
 # install dependency, make-do
 WORKDIR /usr/local/
-RUN git clone https://github.com/caracolazul/make-do.git
+RUN git clone https://github.com/caracolazuldev/make-do.git
 WORKDIR /usr/local/make-do
 RUN make install
 # clean-up
