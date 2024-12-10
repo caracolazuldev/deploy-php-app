@@ -13,6 +13,9 @@ RUN apt-get install -y --install-recommends \
 	tini \
     && apt-get clean
 
+# PHP Extensions:
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+
 # install dependency, make-do
 WORKDIR /usr/local/
 RUN git clone https://github.com/caracolazuldev/make-do.git
