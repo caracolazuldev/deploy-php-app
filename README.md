@@ -15,7 +15,7 @@ WEB_ROOT ?= /var/www/html# htdocs folder
 SSH_HOST_PROD ?= # ssh hostname to fetch source snapshots
 REWRITE_UNTAR ?= s@var/www/html@@# sed replace EXPRESSION for tar --xform=EXPRESSION
 SEARCH_HOST ?= legacy-host# srdb host search-string
-REPLACE_HOST ?= localhost:8080# srdb host replace-string
+REPLACE_HOST ?= localhost# srdb host replace-string: include port if non-standard (80)
 DISABLE_SSL ?= TRUE# boolean disable or enable SSL if not TRUE
 AUTO_CONFIRM ?= TRUE# set TRUE to disable confirmation requests
 CIVICRM_MAILING_BACKEND ?= conf/mailing_backend.mailhog.json# relative path to json input-file to cv api4 Setting.set
@@ -47,6 +47,10 @@ Use the Source, Luke!
 ## Main Makefile
 
 The top-level Makefile is a relic but serves as an example for integrating this code base when not using the containerized version.
+
+## Search and Replace in DB
+
+To migrate a LAMP app, it is often necessary to update URL's in the database. This is done with the `srdb` utility, which is included in the containerized version.
 
 ## Roadmap
 

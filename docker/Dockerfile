@@ -11,3 +11,6 @@ COPY . /app
 WORKDIR /app
 ENTRYPOINT [ "tini", "--", "make" ]
 CMD [ "help" ]
+
+# install Search-Replace-DB:
+RUN make -f /app/src/stage.mk srdb
