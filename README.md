@@ -52,6 +52,11 @@ The top-level Makefile is a relic but serves as an example for integrating this 
 
 To migrate a LAMP app, it is often necessary to update URL's in the database. This is done with the `srdb` utility, which is included in the containerized version.
 
+THIS NEEDS MORE DOCUMENTATION.
+Apparently, we lost the ability to search-replace multiple legacy host strings.
+The tables to search are determined by `SRDB_TABLES` and can be overridden.
+The srdb command itself can be overridden with `SRDB_CMD`, but this is not ideal given the complexity of the command.
+
 ## Roadmap
 
 Currently, geared towards CiviCRM deployment on Drupal or Wordpress. Would like to isolate platform-specific utils and clarify how they are enabled. Equally supporting both CMS's is already achieved. Using without CiviCRM is un-tested.
