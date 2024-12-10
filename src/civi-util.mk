@@ -5,7 +5,7 @@
 
 set-checkout-dummy-pp:
 	echo "update civicrm_contribution_page SET payment_processor = 1 WHERE id IN (1,2);" \
-	| $(MYSQL_CLI) ${DATABASE}
+	| mysql --defaults-file=${MY_CNF} ${DATABASE}
 
 mailing-backend:
 ifdef CIVICRM_MAILING_BACKEND

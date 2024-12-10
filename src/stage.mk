@@ -43,23 +43,36 @@ endif
 
 restore-db: load-mysql-dump replace-urls rebuild-triggers crm-config
 
-drop-db-%: | require-env-MYSQL_CLI
-	$(info $(MYSQL_CLI))
+drop-db-%: ${MYSQL_CNF} | require-env-MYSQL_CNF
+	$(info mysql --defaults-file=${MYSQL_CNF})
 ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,Please confirm my.cnf file: DROP DATABASE ${*}?)
 endif
-	echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | $(MYSQL_CLI) -f
+	echo 'DROP DATABASE ${*}; CREATE DATABASE ${*}' | mysql --defaults-file=${MY_CNF} -f
 
-load-mysql-dump: arch/members.sql drop-db-${DATABASE} | require-env-MYSQL_CLI
-	$(info $(MYSQL_CLI))
+load-mysql-dump: ${MYSQL_CNF} ${MYSQL_SRC_DUMP} drop-db-${DATABASE} | require-env-MYSQL_CNF
+	$(info mysql --defaults-file=${MYSQL_CNF})
 ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,Please confirm my.cnf file: RESTORE ${DATABASE}?)
 endif
-	$(MYSQL_CLI) ${DATABASE} < ${MYSQL_SRC_DUMP}
+	mysql --defaults-file=${MY_CNF} ${DATABASE} < ${MYSQL_SRC_DUMP}
 
 rebuild-triggers:
 	$(eval export CIVICRM_SETTINGS ?= $(shell find /var/www/html -name civicrm.settings.php))
 	cv api4 System.flush '{"triggers":true}'
+
+define my-cnf-tpl :=
+[client]
+host={{MYSQL_HOST}}
+database = {{DATABASE}}
+user = {{DATABASE_USER}}
+password = {{DATABASE_PASSWORD}}
+
+endef
+
+# mysql-cli defaults-file:
+conf/my%cnf:
+	@echo "$$my-cnf-tpl" | ${REPLACE_TOKENS} > $@
 
 # # #
 # Run Configs
