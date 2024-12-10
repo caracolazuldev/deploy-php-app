@@ -1,0 +1,19 @@
+
+services:
+
+# example service integration with likely ENV variables
+# See the README for full list, description, and defaults.
+
+  example:
+    image: caracolazul/deploy-php-app
+    environment:
+      - SEARCH_HOST
+      - REPLACE_HOST
+      - REWRITE_UNTAR
+      - MYSQL_HOST
+      - DATABASE
+      - DATABASE_USER
+      - DATABASE_PASSWORD
+    volumes:
+      - ./arch:/var/www/arch
+      - ./htdocs:/var/www/html
