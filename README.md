@@ -13,7 +13,9 @@ Depends on https://github.com/caracolazul/make-do for make includes (`mdo-*.mk`)
 ```makefile
 WEB_ROOT ?= /var/www/html# htdocs folder
 SSH_HOST_PROD ?= # ssh hostname to fetch source snapshots
+FILES_ARCHIVE ?= /var/www/arch/html.tgz# htdocs (gzip) tarball
 REWRITE_UNTAR ?= s@var/www/html@@# sed replace EXPRESSION for tar --xform=EXPRESSION
+SUDO ?= # leave blank or set 'sudo' to run commands as root
 SEARCH_HOST ?= legacy-host# srdb host search-string
 REPLACE_HOST ?= localhost# srdb host replace-string: include port if non-standard (80)
 DISABLE_SSL ?= TRUE# boolean disable or enable SSL if not TRUE

@@ -1,15 +1,15 @@
 # Works on the current directory, plus configured PACKAGES and WEB_ROOT.
 # Run with permission to sudo, or as root.
-# 
+#
 # Two modes: for single-user and multi-group (Dev, Admin)
 # dev/default targets are single-user
 # stage/shared for multi-group
 #
-# TIP: for dev/single-user, do not run with sudo, but ensure your user has 
+# TIP: for dev/single-user, do not run with sudo, but ensure your user has
 # sudo permissions. This is because single-user mode sets the file owner to
 # the user the script is run as, i.e. root, which is not intended for this case.
 #
-# exec-bins grants x to npm bins in PACKAGES 
+# exec-bins grants x to npm bins in PACKAGES
 # and any files in ./bin and ./sbin, if they exist
 #
 # Set WEB_WRITABLE for web-user to have write-permissions
@@ -21,10 +21,10 @@ PACKAGES ?= ./src/
 
 GRP_ADMIN ?= sudo
 GRP_DEV ?= ubuntu
-USER_WEB ?= www-data
+USER_WEB ?= 33
 GRP_WEB ?= ${USER_WEB}
 
-SETFACL = sudo setfacl -Rm
+SETFACL = ${SUDO} setfacl -Rm
 
 USER_IS_ROOT := $(findstring root,$(shell groups))
 USER_IN_SUDO_GROUP := $(findstring sudo,$(shell groups))
@@ -69,8 +69,8 @@ base-grants: world-readable own-files
 
 world-readable:
 	# World Readable
-	sudo setfacl -m 'o::rX' ./
-	sudo setfacl -RLm 'd:o::rX,o::rX' ${WEB_ROOT} \
+	${SUDO} setfacl -m 'o::rX' ./
+	${SUDO} setfacl -RLm 'd:o::rX,o::rX' ${WEB_ROOT} \
 	$(and $(wildcard ${PACKAGES}), ${PACKAGES})
 
 # Don't restrict a user from their own files
@@ -102,9 +102,9 @@ endif
 # allow web to use /arch
 # sus
 arch-web-traversable:
-	$(SETFACL) $(call group-policy-tpl,${USER_WEB},X) ./arch
+	$(SETFACL) $(call group-policy-tpl,${USER_WEB},X) /var/www/arch
 
-# 
+#
 # EXECUTABLES
 #
 # Note: granting execute to files changes the behaviour of the X flag
@@ -112,26 +112,26 @@ arch-web-traversable:
 exec-bins:
 ifeq ($(wildcard ./bin),./bin)
 	#
-	# everyone can execute in bin/	
+	# everyone can execute in bin/
 	$(SETFACL) 'd:o::x,o::x' ./bin
 	$(SETFACL) $(call group-policy-tpl,${GRP_ADMIN},rwx) ./bin
 	$(SETFACL) $(call group-policy-tpl,${GRP_DEV},rwx) ./bin
 endif
 ifeq ($(wildcard ./sbin),./sbin)
 	#
-	# admins can execute in sbin/	
+	# admins can execute in sbin/
 	$(SETFACL) $(call group-policy-tpl,${GRP_ADMIN},rwx) ./sbin
 endif
 	#
 	# enable npm bins
-	-find ${PACKAGES}*/node_modules/.bin/* -exec sudo chmod ug+x '{}' \;
+	-find ${PACKAGES}*/node_modules/.bin/* -exec ${SUDO} chmod ug+x '{}' \;
 
 #
 # RESET
 #
 
-clear-permissions = sudo chmod -R ug-st,a-rwx,ug+rwX $1
-clear-acls = sudo setfacl --recursive --remove-all $1
+clear-permissions = ${SUDO} chmod -R ug-st,a-rwx,ug+rwX $1
+clear-acls = ${SUDO} setfacl --recursive --remove-all $1
 
 reset:
 	-$(call clear-permissions,./)
@@ -140,8 +140,8 @@ reset:
 	-$(call clear-acls,${WEB_ROOT})
 .PHONY: reset
 
-shared-fs-permissions = sudo chmod -R a=rwX,ug-st $1
-clear-ownership = sudo chown -R nobody:nogroup $1
+shared-fs-permissions = ${SUDO} chmod -R a=rwX,ug-st $1
+clear-ownership = ${SUDO} chown -R nobody:nogroup $1
 
 # for shared directories
 shared-reset:
@@ -157,8 +157,8 @@ shared-reset:
 # SINGLE_USER GRANTS
 #
 
-take-ownership = sudo chown -R $(shell whoami) $1
-private-fs-permissions = sudo chmod -R a-st,ug=rwX,o-rwx $1
+take-ownership = ${SUDO} chown -R $(shell whoami) $1
+private-fs-permissions = ${SUDO} chmod -R a-st,ug=rwX,o-rwx $1
 
 single-user:
 	$(call take-ownership,./)
@@ -170,7 +170,7 @@ single-user:
 # SHARED GRANTS
 #
 
-set-gid = sudo find $1 -type d -exec chmod g+s {} \;
+set-gid = ${SUDO} find $1 -type d -exec chmod g+s {} \;
 
 set-gid:
 	$(call set-gid,./)
@@ -178,7 +178,7 @@ set-gid:
 .phony: set-gid
 
 # Set sticky-bit. You'd better know what you are doing.
-set-sticky = sudo find $1 -type d -exec chmod o+t {} \;
+set-sticky = ${SUDO} find $1 -type d -exec chmod o+t {} \;
 # Sticky means, only an owner may remove a file. May be no use-case with ACLs?
 set-sticky:
 	$(call set-sticky,./)
@@ -192,11 +192,11 @@ revoke-dir = $(SETFACL) $(call group-revoked,$2),d:o::-,o::- $1
 
 # some recommended dirs to protect
 revoke-%-conf revoke-%-arch revoke-%-sbin revoke-%-dumps:
-	$(call revoke-dir,./conf,$*)
+	$(call revoke-dir,/var/www/conf,$*)
 
 revoke:
-	$(and $(wildcard ./conf),$(call revoke-dir,./conf,${GRP_DEV}))
-	$(and $(wildcard ./arch),$(call revoke-dir,./arch,${GRP_DEV}))
+	$(and $(wildcard /var/www/conf),$(call revoke-dir,/var/www/conf,${GRP_DEV}))
+	$(and $(wildcard /var/www/arch),$(call revoke-dir,/var/www/arch,${GRP_DEV}))
 	$(and $(wildcard ./sbin),$(call revoke-dir,./sbin,${GRP_DEV}))
 
 dev-readable:
@@ -204,7 +204,7 @@ dev-readable:
 	$(SETFACL) $(call group-readable,${GRP_DEV}) ./
 
 DEV_WRITABLE := ${WEB_ROOT}
-ifeq ($(wildcard ./arch),./arch)
+ifeq ($(wildcard /var/www/arch),./arch)
 DEV_WRITABLE := ${DEV_WRITABLE} ./arch
 endif
 ifeq ($(wildcard ${PACKAGES}),${PACKAGES})

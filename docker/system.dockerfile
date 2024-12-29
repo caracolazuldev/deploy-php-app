@@ -7,6 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # build-essential: for make
 RUN apt-get update && apt-get install -y tzdata
 RUN apt-get install -y --install-recommends \
+    acl \
     build-essential \
     vim \
 	git \

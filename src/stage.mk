@@ -20,12 +20,12 @@ ifneq (TRUE,${AUTO_CONFIRM})
 	$(call user-confirm,"Delete all files in ${WEB_ROOT}?")
 endif
 	@ echo 'Dropping files...';
-	sudo chmod -R ug+rw ${WEB_ROOT}
-	-sudo rm -r ${WEB_ROOT}* ${WEB_ROOT}.*
+	${SUDO} chmod -R ug+rw ${WEB_ROOT}/
+	-${SUDO} rm -r ${WEB_ROOT}* ${WEB_ROOT}/.*
 
-extract-archive: arch/html.tgz file-permissions
+extract-archive: ${FILES_ARCHIVE} file-permissions
 	@# avoid setting permissions or timestamps: --touch --no-same-permissions
-	tar -xzf arch/html.tgz -C ${WEB_ROOT} $(if ${REWRITE_UNTAR}, --xform '${REWRITE_UNTAR}') --touch --no-same-permissions
+	tar -xzf ${FILES_ARCHIVE} -C ${WEB_ROOT} $(if ${REWRITE_UNTAR}, --xform '${REWRITE_UNTAR}') --touch --no-same-permissions
 
 files-restore: drop-files extract-archive
 
